@@ -1,12 +1,12 @@
 package uz.hayatbank.api.utils;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.crypto.SecretKey;
 
 public class Test {
-    public static final Logger _logger = LogManager.getLogger(Test.class);
+    public static final Logger _logger = LoggerFactory.getLogger(Test.class);
 
     public static void main(String[] args) {
         SecretKey key = JwtUtil.getKey();

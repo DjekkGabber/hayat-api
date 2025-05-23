@@ -1,19 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/" configDebug="true">
+<Configuration status="WARN">
     <Appenders>
-        <Console name="CONSOLE" target="SYSTEM_OUT">
-            <PatternLayout
-                    pattern="%d{yy-MM-dd HH:mm:ss.SSS} [%.6t] %highlight{%level}{FATAL=bg_red, ERROR=bright red, WARN=yellow, INFO=bright green, DEBUG=bright blue} %C{3}.%style{%M(%F:%L)}{bright,yellow} - %msg%n%throwable"/>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
         </Console>
     </Appenders>
     <Loggers>
-
         <logger name="uz.hayatbank.api" level="INFO" additivity="false">
             <AppenderRef ref="CONSOLE"/>
         </logger>
-
-        <Root level="WARN">
-            <AppenderRef ref="CONSOLE"/>
+        <Root level="info">
+            <AppenderRef ref="Console"/>
         </Root>
     </Loggers>
-</log4j:configuration>
+    <!--<?xml version="1.0" encoding="UTF-8"?>-->
+    <!--<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/" configDebug="true">-->
+    <!--    <Appenders>-->
+    <!--        <Console name="CONSOLE" target="SYSTEM_OUT">-->
+    <!--            <PatternLayout-->
+    <!--                    pattern="%d{yy-MM-dd HH:mm:ss.SSS} [%.6t] %highlight{%level}{FATAL=bg_red, ERROR=bright red, WARN=yellow, INFO=bright green, DEBUG=bright blue} %C{3}.%style{%M(%F:%L)}{bright,yellow} - %msg%n%throwable"/>-->
+    <!--        </Console>-->
+    <!--    </Appenders>-->
+    <!--    <Loggers>-->
+
+    <!--        <logger name="uz.hayatbank.api" level="INFO" additivity="false">-->
+    <!--            <AppenderRef ref="CONSOLE"/>-->
+    <!--        </logger>-->
+
+    <!--        <Root level="WARN">-->
+    <!--            <AppenderRef ref="CONSOLE"/>-->
+    <!--        </Root>-->
+    <!--    </Loggers>-->
+    <!--</log4j:configuration>-->
+</Configuration>

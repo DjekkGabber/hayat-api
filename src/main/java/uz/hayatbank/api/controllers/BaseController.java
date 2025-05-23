@@ -1,8 +1,8 @@
 package uz.hayatbank.api.controllers;
 
 import org.apache.ibatis.session.SqlSession;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RestController;
 import uz.hayatbank.api.bean.UserBean;
 import uz.hayatbank.api.db.DBConfig;
@@ -16,7 +16,7 @@ import java.util.Map;
 
 @RestController
 public class BaseController {
-    public static final Logger _logger = LogManager.getLogger(BaseController.class);
+    public static final Logger _logger = LoggerFactory.getLogger(BaseController.class);
 
     protected Integer checkPhoneNumber(String phoneNumber) {
         try (SqlSession sqlSession = DBConfig.getSqlSession()) {

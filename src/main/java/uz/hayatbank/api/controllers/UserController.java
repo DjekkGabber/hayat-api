@@ -2,8 +2,8 @@ package uz.hayatbank.api.controllers;
 
 import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +26,7 @@ import java.util.Map;
 @RestController
 public class UserController extends BaseController {
 
-    public static final Logger _logger = LogManager.getLogger(UserController.class);
+    public static final Logger _logger = LoggerFactory.getLogger(UserController.class);
 
     @GetMapping("/self")
     private ResponseEntity<?> getSelfUserInfo(@RequestHeader Map<String, String> headers) {

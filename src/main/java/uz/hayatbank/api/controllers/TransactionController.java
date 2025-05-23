@@ -2,8 +2,8 @@ package uz.hayatbank.api.controllers;
 
 import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +31,7 @@ import java.util.Map;
 @RequestMapping("/api/transaction")
 @RestController
 public class TransactionController extends BaseController {
-    public static final Logger _logger = LogManager.getLogger(TransactionController.class);
+    public static final Logger _logger = LoggerFactory.getLogger(TransactionController.class);
 
     @PostMapping("/self")
     private ResponseEntity<?> getSelfTransactionsList(@RequestHeader Map<String, String> headers, @RequestBody GenericPagingArgument argument) {

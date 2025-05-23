@@ -3,13 +3,13 @@ package uz.hayatbank.api.db;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
 
 public class DBConfig {
-    private static final Logger _logger = LogManager.getLogger(DBConfig.class);
+    private static final Logger _logger = LoggerFactory.getLogger(DBConfig.class);
     private static SqlSessionFactory sqlSessionFactory;
 
     private static SqlSessionFactory getSqlSessionFactory() {

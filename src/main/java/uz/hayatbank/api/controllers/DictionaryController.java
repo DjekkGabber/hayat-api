@@ -1,8 +1,8 @@
 package uz.hayatbank.api.controllers;
 
 import org.apache.ibatis.session.SqlSession;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,7 +18,7 @@ import java.util.List;
 @RestController
 public class DictionaryController extends BaseController {
 
-    public static final Logger _logger = LogManager.getLogger(DictionaryController.class);
+    public static final Logger _logger = LoggerFactory.getLogger(DictionaryController.class);
 
     @GetMapping("/transaction-types")
     private ResponseEntity<?> getSelfUserInfo() {
