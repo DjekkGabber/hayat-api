@@ -1,93 +1,585 @@
-# fintech-api
+# hayat-bank-api
 
 
 
-## Getting started
+## Kerakli utilitalar
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
-
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
-
-## Add your files
-
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/topics/git/add_files/#add-files-to-a-git-repository) or push an existing Git repository with the following command:
-
-```
-cd existing_repo
-git remote add origin https://gitlab.com/djekkgabber/fintech-api.git
-git branch -M main
-git push -uf origin main
-```
-
-## Integrate with your tools
-
-- [ ] [Set up project integrations](https://gitlab.com/djekkgabber/fintech-api/-/settings/integrations)
-
-## Collaborate with your team
-
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/user/project/merge_requests/auto_merge/)
-
-## Test and Deploy
-
-Use the built-in continuous integration in GitLab.
-
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+1. Java JDK 17+
+2. PostgresSQL 17
 
 ***
 
-# Editing this README
+## Kerakli fayllar joylashuvi
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
+- #### DB Backup: ***/src/main/resources/files/hayat_db.sql***
+- #### Postman collection: ***/src/main/resources/files/Condidate test API.postman_collection.json***
 
-## Suggestions for a good README
+***
 
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+### DB ni import qilish uchun 
+- a) Quyidagi scriptni yurgizamiz
+```sql
+create role hayat with password 'Aa12345678' login;
+```
+- b) Backupni restore qilamiz. (Backup fayl: ***/src/main/resources/files/hayat_db.sql***)
+- c) Restore bo'lgandan keyin **HAYAT** DB ga ulanib crypto extensionni enable qilish kerak bo'ladi. Quyidagi scriptdagidek:
+```sql
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+```
+***
 
-## Name
-Choose a self-explaining name for your project.
+## Postman Collectiondan foydalanish
+Collection fayl joylashuvi: ***/src/main/resources/files/Condidate test API.postman_collection.json***
+#### Eslatma!!! OTP kodi har doim _123456_
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+***
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+##### 1. ***Common/Ping*** ni tekshirib ko`ramiz:
+```json
+{
+    "code": 0,
+    "message": "Ping success. DB Time: 2025-05-23 12:24:25.9523+05"
+}
+```
+##### shunaqa response qaytishi kerak
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+***
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+##### 2. ***Login and Registration/Check user by phone number*** ni ishlatamiz. Bu orqali login yoki register qilishni aniqlaymiz
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+```json
+{
+  "code": 0,
+  "message": "Success",
+  "otp_session": "8e2b351b47f87c3eb869feab40a11c9d8e1c8499",
+  "need_register": 0
+}
+```
+- Responseda **need_register** da qiymat _1_ kelsa ***Login and Registration/Registration*** ga o`tamiz va registratsiya qilamiz.
+- Agar **need_register** da qiymat _0_ kelsa ***Login and Registration/Login via OTP*** ga o`tamiz va registratsiya qilamiz.
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+***
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+#### 3. Registratsiyadan o`tish uchun ***Login and Registration/Registration*** API ni ishlatamiz
+**Request body**
+```json
+{
+  "phone": "987654321",
+  "fio":"User FISH",
+  "email":"user_mail@email.mail",
+  "otp_session": "4370a89edf5b1502440a9b6dc11f290d221e7456",
+  "otp_code": "123456"
+}
+```
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+**Response (Success)**
+```json
+{
+  "code": 0,
+  "message": "Success",
+  "auth_token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJVc2VyIEZJU0giLCJpYXQiOjE3NDc5ODczNDd9.a4wb4nuBKPFi8Qae0VtdOAtUjDzr1eCSj--xK8r74D8",
+  "refresh_token": "cyOYukN0G42l5Q8KwYkrbvK1hwMO2WY2y2SxH7F132c",
+  "type": "Bearer",
+  "expire_seconds": 86400
+}
+```
+Responseda qaytgan **auth_token** va **refresh_token** variables ga yozib qo'yish kerak. Keyinchalikka avtorizatsiya uchun headerga qo'shib yuboriladi
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+**Response (Error)**
+```json
+{
+  "code": 15,
+  "message": "Telefon raqam xato kiritilgan. Iltimos, tekshirib qayta kiriting. Telefon raqam operator kodi (2 ta raqam) va abonent raqami (7 ta raqam)dan iborat bo`lishi kerak (Misol: 991234567)",
+  "auth_token": null,
+  "refresh_token": null,
+  "type": "Bearer",
+  "expire_seconds": 86400
+}
+```
+***
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+#### 4. Avtorizatsiyadan o`tish uchun ***Login and Registration/Login via OTP*** API ni ishlatamiz
+**Request body**
+```json
+{
+  "phone": "903211609",
+  "otp_session": "598655413820390e27c03e4ef4ae438d885f8efb",
+  "otp_code": "123456"
+}
+```
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+**Response (Success)**
+```json
+{
+  "code": 0,
+  "message": "Success",
+  "auth_token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJCZXhyb2B6IiwiaWF0IjoxNzQ3OTg3Nzk5fQ.26lruu4tnMqWl_PZstVZnAQ9Dn4xHAcKSGpsaex2uMc",
+  "refresh_token": "_Qm9UsYEKBWsBciVeXauy_NUSuPk5XrinjECVxsBAWg",
+  "type": "Bearer",
+  "expire_seconds": 86400
+}
+```
+Responseda qaytgan **auth_token** va **refresh_token** variables ga yozib qo'yish kerak. Keyinchalikka avtorizatsiya uchun headerga qo'shib yuboriladi
 
-## License
-For open source projects, say how it is licensed.
+**Response (Error)**
+```json
+{
+  "code": 6,
+  "message": "Tasdiqlash kodini to`g`ri kiriting",
+  "auth_token": null,
+  "refresh_token": null,
+  "type": "Bearer",
+  "expire_seconds": 86400
+}
+```
+***
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+#### 5. Avtorizatsiya tokenini yangilash ***Login and Registration/Refresh token*** API ni ishlatamiz
+**Request body**
+```json
+{
+  "refresh_token": "_Qm9UsYEKBWsBciVeXauy_NUSuPk5XrinjECVxsBAWg"
+}
+```
+
+**Response (Success)**
+```json
+{
+  "code": 0,
+  "message": "Success",
+  "auth_token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJCZXhyb2B6IiwiaWF0IjoxNzQ3OTg3Nzk5fQ.26lruu4tnMqWl_PZstVZnAQ9Dn4xHAcKSGpsaex2uMc",
+  "refresh_token": "_Qm9UsYEKBWsBciVeXauy_NUSuPk5XrinjECVxsBAWg",
+  "type": "Bearer",
+  "expire_seconds": 86400
+}
+```
+Responseda qaytgan **auth_token** va **refresh_token** variables ga yozib qo'yish kerak. Keyinchalikka avtorizatsiya uchun headerga qo'shib yuboriladi
+
+**Response (Error)**
+```json
+{
+  "code": 11,
+  "message": "Foydalanuvchi topilmadi",
+  "auth_token": null,
+  "refresh_token": null,
+  "type": "Bearer",
+  "expire_seconds": 86400
+}
+```
+Bunday holatda **HttpCode=401 (Unauthorized)** keladi. Qaytadan **(1) Check phone** qilib yurib kelish kerak.
+
+***
+
+#### 6. ***Dictionaries/Transaction types*** API - tranzaktsiyalar turlarini qaytaradi
+
+**Response (Success)**
+```json
+{
+  "code": 0,
+  "message": "Success",
+  "dictionary": [
+    {
+      "id": 1,
+      "name_uz": "Hisobni to`ldirish",
+      "name_ru": "Пополнение счета",
+      "is_debit": 1
+    },
+    
+    ...
+    
+    {
+      "id": 5,
+      "name_uz": "Kartangizga o`tkazma",
+      "name_ru": "Перевод на вашу карту",
+      "is_debit": 0
+    }
+  ]
+}
+```
+
+***
+
+#### 7. O'z ma'lumotlarini olish ***User/Self info***
+
+**_Header_** ga _Authorization_ fieldiga yuqorida olingan **auth_token** qo'shib qo'yish kerak.
+
+**Response (Success)**
+```json
+{
+  "code": 0,
+  "message": "Success",
+  "self": {
+    "id": 10,
+    "user_statuses_id": 1,
+    "fio": "Bexro`z",
+    "phone": "903211609",
+    "email": "bekki@mail.ru",
+    "registered_date": "2025-05-23 11:05:09.82931",
+    "updated_date": null,
+    "balance": 3125000.0
+  }
+}
+```
+
+**Response (Error)**
+```json
+{
+  "code": 11,
+  "message": "Foydalanuvchi topilmadi",
+  "self": null
+}
+```
+Bunday holatda **HttpCode=401 (Unauthorized)** keladi. **(5) Refresh token** orqali tokenlarni yangilab qayta urinish kerak. Agar shunda ham 401 qaytsa **(1) Check phone** qilib yurib kelish kerak
+
+***
+
+#### 8. Foydalanuvchilar ro`yxatini olish ***User/Users list***
+**Request body**
+```json
+{
+  "page": 1,
+  "per_page": 5
+}
+```
+
+**Response (Success)**
+```json
+{
+  "code": 0,
+  "message": "Success",
+  "total": 10,
+  "pages": 5,
+  "current": 1,
+  "users": [
+    {
+      "id": 3,
+      "user_statuses_id": 1,
+      "fio": "Test FIO2",
+      "phone": "334204051",
+      "email": "email@email.email",
+      "registered_date": "2025-05-22 16:47:20.053498",
+      "updated_date": null,
+      "balance": 0.0
+    },
+    {
+      "id": 4,
+      "user_statuses_id": 1,
+      "fio": "FIO after changed",
+      "phone": "334204050",
+      "email": "info@info.info",
+      "registered_date": "2025-05-22 16:49:49.866123",
+      "updated_date": "2025-05-22 21:26:34.007923",
+      "balance": 0.0
+    }
+  ]
+}
+```
+
+**Response (Error)**
+```json
+{
+  "code": 11,
+  "message": "Foydalanuvchi topilmadi",
+  "total": 0,
+  "pages": 0,
+  "current": 1,
+  "users": []
+}
+```
+Bunday holatda **HttpCode=401 (Unauthorized)** keladi. **(5) Refresh token** orqali tokenlarni yangilab qayta urinish kerak. Agar shunda ham 401 qaytsa **(1) Check phone** qilib yurib kelish kerak
+
+***
+
+#### 8. Foydalanuvchilar ma'lumotlarini tahrilashi (Faqat o'zinikini) ***User/Update self info***
+**Request body**
+```json
+{
+  "fio": "Hamroqulov B",
+  "email": "hamroqulov_bekki@mail.ru"
+}
+```
+
+**Response (Success)**
+```json
+{
+  "code": 0,
+  "message": "Success",
+  "self": {
+    "id": 10,
+    "user_statuses_id": 1,
+    "fio": "Hamroqulov B",
+    "phone": "903211609",
+    "email": "hamroqulov_bekki@mail.ru",
+    "registered_date": "2025-05-23 11:05:09.82931",
+    "updated_date": "2025-05-23 13:25:38.463834",
+    "balance": 3125000.0
+  }
+}
+```
+
+**Response (Error)**
+```json
+{
+  "code": 11,
+  "message": "Foydalanuvchi topilmadi",
+  "self": null
+}
+```
+
+Bunday holatda **HttpCode=401 (Unauthorized)** keladi. **(5) Refresh token** orqali tokenlarni yangilab qayta urinish kerak. Agar shunda ham 401 qaytsa **(1) Check phone** qilib yurib kelish kerak
+
+**Response (Error)**
+```json
+{
+  "code": 16,
+  "message": "E-Mail xato kiritilgan. Iltimos, tekshirib qayta kiriting",
+  "self": null
+}
+```
+
+***
+
+#### 9. Foydalanuvchi tranzaktsiyalarini ko`rish (Faqat o'zinikini) ***Transactions/Self transactions list***
+**Request body**
+```json
+{
+  "page": 1,
+  "per_page": 10
+}
+```
+
+**Response (Success)**
+```json
+{
+  "code": 0,
+  "message": "Success",
+  "total": 2,
+  "pages": 1,
+  "current": 1,
+  "transactions": [
+    {
+      "user_fio": "Hamroqulov B",
+      "user_phone": "903211609",
+      "transaction_type": "Kartangizga o`tkazma",
+      "status": "Qabul qilingan",
+      "saldo_start": 0.0,
+      "amount": 125000.0,
+      "saldo_end": 125000.0,
+      "is_debit": 1,
+      "transaction_time": "2025-05-23 11:05:58.528411",
+      "payment_details": "Kartangizga o`tkazma"
+    },
+    {
+      "user_fio": "Hamroqulov B",
+      "user_phone": "903211609",
+      "transaction_type": "Hisobni to`ldirish",
+      "status": "Qabul qilingan",
+      "saldo_start": 125000.0,
+      "amount": 3000000.0,
+      "saldo_end": 3125000.0,
+      "is_debit": 1,
+      "transaction_time": "2025-05-23 11:07:39.422875",
+      "payment_details": "Hisobni to`ldirish"
+    }
+  ]
+}
+```
+
+**Response (Error)**
+```json
+{
+  "code": 11,
+  "message": "Foydalanuvchi topilmadi",
+  "self": null
+}
+```
+
+Bunday holatda **HttpCode=401 (Unauthorized)** keladi. **(5) Refresh token** orqali tokenlarni yangilab qayta urinish kerak. Agar shunda ham 401 qaytsa **(1) Check phone** qilib yurib kelish kerak
+
+***
+
+### 10. Foydalanuvchi shaxsiy hisobraqami bilan amaliyot (Faqat o'zini balansi bilan). 2 qismga bo`linadi
+- #### 1. Foydalanuvchini yoki balansini tekshirish (tranzaktsiya turiga qarab, ya'ni, `is_debit=0` bo'lsa hisobida shuncha mablag`mavjudligini tekshirish) va OTP olish;
+- #### 2. Tranzaktsiyani o'tkazish: hisobiga mablag' tushishi yoki mablag' yechilishi;
+
+#### 10.1. Foydalanuvchini yoki balansini tekshirish va OTP olish ***Transactions/Before perform transaction***
+**Request body**
+```json
+{
+  "amount": 3000000,
+  "transaction_type": 1
+}
+```
+
+**Response (Success)**
+```json
+{
+  "code": 0,
+  "message": "Success",
+  "otp_session": "48c59c8e46cf3e49e81feaf31687113d1bfcf9d4"
+}
+```
+
+**Response (Error)**
+```json
+{
+  "code": 11,
+  "message": "Foydalanuvchi topilmadi",
+  "self": null
+}
+```
+
+Bunday holatda **HttpCode=401 (Unauthorized)** keladi. **(5) Refresh token** orqali tokenlarni yangilab qayta urinish kerak. Agar shunda ham 401 qaytsa **(1) Check phone** qilib yurib kelish kerak
+
+**Response (Error)**
+```json
+{
+  "code": 14,
+  "message": "Hisobingizda yetarli mablag` mavjud emas",
+  "otp_session": null
+}
+```
+
+***
+
+#### 10.2. Tranzaktsiyani o'tkazish: hisobiga mablag' tushishi yoki mablag' yechilishi ***Transactions/Perform transaction***
+**Request body**
+```json
+{
+  "amount": 3000000,
+  "transaction_type": 1,
+  "otp_session": "48c59c8e46cf3e49e81feaf31687113d1bfcf9d4",
+  "otp_code": "123456"
+}
+```
+
+**Response (Success)**
+```json
+{
+  "code": 0,
+  "message": "Success"
+}
+```
+
+**Response (Error)**
+```json
+{
+  "code": 11,
+  "message": "Foydalanuvchi topilmadi",
+  "self": null
+}
+```
+
+Bunday holatda **HttpCode=401 (Unauthorized)** keladi. **(5) Refresh token** orqali tokenlarni yangilab qayta urinish kerak. Agar shunda ham 401 qaytsa **(1) Check phone** qilib yurib kelish kerak
+
+**Response (Error)**
+```json
+{
+  "code": 14,
+  "message": "Hisobingizda yetarli mablag` mavjud emas"
+}
+```
+
+***
+
+#### 11. Barcha tranzaktsiyani ro`yxatini olish ***Transactions/Transactions list***
+**Request body**
+```json
+{
+  "user_phone": "",
+  "transaction_type": null,
+  "date_from": "",
+  "date_to": "",
+  "page": 1,
+  "per_page": 10
+}
+```
+
+Bu yerda:
+
+_user_phone_ - qaysi foydalanuvchi bo'yicha ko'rmoqchiligimiz;
+
+_transaction_type_ - tranzaktsiya turi bo`yicha filter (**(6) Dictionaries/Transaction types**)
+
+_date_from_ - qaysi sanadan boshlab;
+
+_date_to_ - qaysi sanagacha;
+
+_page_ - qaysi sahifa;
+
+_per_page_ - sahifada nechtadan ko`rsatish;
+
+
+**Response (Success)**
+```json
+{
+  "code": 0,
+  "message": "Success",
+  "total": 6,
+  "pages": 2,
+  "current": 1,
+  "transactions": [
+    {
+      "user_fio": "Test FIO",
+      "user_phone": "977801467",
+      "transaction_type": "Davlat xizmatlari uchun to`lov",
+      "status": "Qabul qilingan",
+      "saldo_start": 2000.0,
+      "amount": -500.0,
+      "saldo_end": 1500.0,
+      "is_debit": 0,
+      "transaction_time": "2025-05-22 22:46:26.723874",
+      "payment_details": "Davlat xizmatlari uchun to`lov"
+    },
+    {
+      "user_fio": "Jorj Bush",
+      "user_phone": "991234567",
+      "transaction_type": "Davlat xizmatlari uchun to`lov",
+      "status": "Qabul qilingan",
+      "saldo_start": 9500000.0,
+      "amount": -50000.0,
+      "saldo_end": 9450000.0,
+      "is_debit": 0,
+      "transaction_time": "2025-05-23 10:45:38.649018",
+      "payment_details": "Davlat xizmatlari uchun to`lov"
+    },
+    {
+      "user_fio": "Tronald Damp",
+      "user_phone": "900001234",
+      "transaction_type": "Davlat xizmatlari uchun to`lov",
+      "status": "Qabul qilingan",
+      "saldo_start": 9000000.0,
+      "amount": -500000.0,
+      "saldo_end": 8500000.0,
+      "is_debit": 0,
+      "transaction_time": "2025-05-23 10:49:43.649681",
+      "payment_details": "Davlat xizmatlari uchun to`lov"
+    }
+  ]
+}
+```
+
+**Response (Error)**
+```json
+{
+  "code": 11,
+  "message": "Foydalanuvchi topilmadi",
+  "self": null
+}
+```
+
+Bunday holatda **HttpCode=401 (Unauthorized)** keladi. **(5) Refresh token** orqali tokenlarni yangilab qayta urinish kerak. Agar shunda ham 401 qaytsa **(1) Check phone** qilib yurib kelish kerak
+
+**Response (Error)**
+```json
+{
+  "code": 18,
+  "message": "\"date_from\" formati \"dd.MM.yyyy\" ko`rinishida bo`lishi kerak",
+  "total": null,
+  "pages": null,
+  "current": null,
+  "transactions": null
+}
+```
+
+***
