@@ -1,0 +1,116 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE mapper PUBLIC '-//mybatis.org//DTD Mapper 3.0//EN' 'http://mybatis.org/dtd/mybatis-3-mapper.dtd'>
+<mapper namespace='Common'>
+
+    <select id="selectUsersCnt" parameterType="map" resultType="int">
+        select count(*)
+        from users
+        where is_deleted = 0
+        <if test="id != null">
+            and id = #{id}
+        </if>
+        <if test="user_statuses_id != null">
+            and user_statuses_id = #{user_statuses_id}
+        </if>
+        <if test="phone_number != null">
+            and phone = #{phone_number}
+        </if>
+    </select>
+
+    <select id="selectUsers" parameterType="map" resultType="uz.hayatbank.api.bean.UserBean">
+        select *
+        from users
+        where is_deleted=0
+        <if test="id != null">
+            and id = #{id}
+        </if>
+        <if test="user_statuses_id != null">
+            and user_statuses_id = #{user_statuses_id}
+        </if>
+        <if test="phone_number != null">
+            and phone = #{phone_number}
+        </if>
+    </select>
+
+    <parameterMap id="create_otp_session_map" type="java.util.Map">
+        <parameter property="p_phone" jdbcType="VARCHAR" javaType="java.lang.String" mode="IN"/>
+
+        <parameter property="p_session_id" jdbcType="VARCHAR" javaType="java.lang.String" mode="OUT"/>
+        <parameter property="p_result" jdbcType="INTEGER" javaType="java.lang.Integer" mode="OUT"/>
+        <parameter property="p_result_msg" jdbcType="VARCHAR" javaType="java.lang.String" mode="OUT"/>
+    </parameterMap>
+    <update id="create_otp_session" parameterMap="create_otp_session_map" statementType="CALLABLE">
+        CALL create_otp_session(?, ?, ?, ?)
+    </update>
+
+    <parameterMap id="check_otp_session_map" type="java.util.Map">
+        <parameter property="p_session_id" jdbcType="VARCHAR" javaType="java.lang.String" mode="IN"/>
+        <parameter property="p_code" jdbcType="VARCHAR" javaType="java.lang.String" mode="IN"/>
+
+        <parameter property="p_try_cnt" jdbcType="INTEGER" javaType="java.lang.Integer" mode="OUT"/>
+        <parameter property="p_result" jdbcType="INTEGER" javaType="java.lang.Integer" mode="OUT"/>
+        <parameter property="p_result_msg" jdbcType="VARCHAR" javaType="java.lang.String" mode="OUT"/>
+    </parameterMap>
+    <update id="check_otp_session" parameterMap="check_otp_session_map" statementType="CALLABLE">
+        CALL check_otp_session(?, ?, ?, ?, ?)
+    </update>
+
+    <parameterMap id="add_token_map" type="java.util.Map">
+        <parameter property="p_users_id" jdbcType="INTEGER" javaType="java.lang.Integer" mode="IN"/>
+        <parameter property="p_auth_token" jdbcType="VARCHAR" javaType="java.lang.String" mode="IN"/>
+        <parameter property="p_refresh_token" jdbcType="VARCHAR" javaType="java.lang.String" mode="IN"/>
+
+        <parameter property="p_result" jdbcType="INTEGER" javaType="java.lang.Integer" mode="OUT"/>
+        <parameter property="p_result_msg" jdbcType="VARCHAR" javaType="java.lang.String" mode="OUT"/>
+    </parameterMap>
+    <update id="add_token" parameterMap="add_token_map" statementType="CALLABLE">
+        CALL add_token(?, ?, ?, ?, ?)
+    </update>
+
+    <parameterMap id="check_user_by_refresh_token_map" type="java.util.Map">
+        <parameter property="p_refresh_token" jdbcType="VARCHAR" javaType="java.lang.String" mode="IN"/>
+        <parameter property="p_invoke" jdbcType="INTEGER" javaType="java.lang.Integer" mode="IN"/>
+
+        <parameter property="p_users_id" jdbcType="INTEGER" javaType="java.lang.Integer" mode="OUT"/>
+    </parameterMap>
+    <update id="check_user_by_refresh_token" parameterMap="check_user_by_refresh_token_map" statementType="CALLABLE">
+        CALL check_by_refresh_token(?, ?, ?)
+    </update>
+
+    <parameterMap id="check_by_auth_token_map" type="java.util.Map">
+        <parameter property="p_auth_token" jdbcType="VARCHAR" javaType="java.lang.String" mode="IN"/>
+
+        <parameter property="p_users_id" jdbcType="INTEGER" javaType="java.lang.Integer" mode="OUT"/>
+    </parameterMap>
+    <update id="check_by_auth_token" parameterMap="check_by_auth_token_map" statementType="CALLABLE">
+        CALL check_by_auth_token(?, ?)
+    </update>
+
+    <parameterMap id="create_user_map" type="java.util.Map">
+        <parameter property="p_fio" jdbcType="VARCHAR" javaType="java.lang.String" mode="IN"/>
+        <parameter property="p_phone" jdbcType="VARCHAR" javaType="java.lang.String" mode="IN"/>
+        <parameter property="p_email" jdbcType="VARCHAR" javaType="java.lang.String" mode="IN"/>
+        <parameter property="p_auth_token" jdbcType="VARCHAR" javaType="java.lang.String" mode="IN"/>
+        <parameter property="p_refresh_token" jdbcType="VARCHAR" javaType="java.lang.String" mode="IN"/>
+        <parameter property="p_session_id" jdbcType="VARCHAR" javaType="java.lang.String" mode="IN"/>
+        <parameter property="p_otp_code" jdbcType="VARCHAR" javaType="java.lang.String" mode="IN"/>
+
+        <parameter property="p_result" jdbcType="INTEGER" javaType="java.lang.Integer" mode="OUT"/>
+        <parameter property="p_result_msg" jdbcType="VARCHAR" javaType="java.lang.String" mode="OUT"/>
+    </parameterMap>
+    <update id="create_user" parameterMap="create_user_map" statementType="CALLABLE">
+        CALL create_user(?, ?, ?, ?, ?, ?, ?, ?, ?)
+    </update>
+
+    <parameterMap id="update_user_map" type="java.util.Map">
+        <parameter property="p_users_id" jdbcType="INTEGER" javaType="java.lang.Integer" mode="IN"/>
+        <parameter property="p_fio" jdbcType="VARCHAR" javaType="java.lang.String" mode="IN"/>
+        <parameter property="p_email" jdbcType="VARCHAR" javaType="java.lang.String" mode="IN"/>
+
+        <parameter property="p_result" jdbcType="INTEGER" javaType="java.lang.Integer" mode="OUT"/>
+        <parameter property="p_result_msg" jdbcType="VARCHAR" javaType="java.lang.String" mode="OUT"/>
+    </parameterMap>
+    <update id="update_user" parameterMap="update_user_map" statementType="CALLABLE">
+        CALL update_user(?, ?, ?, ?, ?)
+    </update>
+</mapper>

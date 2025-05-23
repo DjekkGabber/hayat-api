@@ -1,0 +1,104 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE mapper PUBLIC '-//mybatis.org//DTD Mapper 3.0//EN' 'http://mybatis.org/dtd/mybatis-3-mapper.dtd'>
+<mapper namespace='Common'>
+
+    <select id="selectTransactionsCnt" parameterType="map" resultType="int">
+        select
+        count(ut.id)
+        from user_transactions ut
+        left join users u on u.id=ut.users_id
+        left join user_transaction_types utt on utt.id=ut.user_transaction_types_id
+        where 1=1
+        <if test="users_id != null">
+            and u.id = #{users_id}
+        </if>
+        <if test="user_phone != null">
+            and u.phone = #{user_phone}
+        </if>
+        <if test="transaction_type != null">
+            and utt.id = #{transaction_type}
+        </if>
+        <if test="date_from != null and date_to == null">
+            and ut.created_date <![CDATA[ >= ]]> to_timestamp('${date_from}', 'dd.mm.yyyy')
+        </if>
+        <if test="date_from == null and date_to != null">
+            and ut.created_date <![CDATA[ <= ]]> to_timestamp('${date_to} 23:59:59', 'dd.mm.yyyy hh24:mi:ss')
+        </if>
+        <if test="date_from != null and date_to != null">
+            and ut.created_date between to_timestamp('${date_from}', 'dd.mm.yyyy')
+            and to_timestamp('${date_to} 23:59:59', 'dd.mm.yyyy hh24:mi:ss')
+        </if>
+    </select>
+
+    <select id="selectTransactions" parameterType="map" resultType="uz.hayatbank.api.bean.UserTransactionBean">
+        select
+        u.fio as user_fio,
+        u.phone as user_phone,
+        utt.name_uz as transaction_type,
+        (case when ut.status=1 then 'Qabul qilingan' else 'Bekor qilingan' end) as status,
+        ut.saldo_start,
+        ut.amount,
+        ut.saldo_end,
+        (case when ut.amount>0 then 1 else 0 end) as is_debit,
+        ut.created_date as transaction_time,
+        ut.payment_details
+        from user_transactions ut
+        left join users u on u.id=ut.users_id
+        left join user_transaction_types utt on utt.id=ut.user_transaction_types_id
+        where 1=1
+        <if test="users_id != null">
+            and u.id = #{users_id}
+        </if>
+        <if test="user_phone != null">
+            and u.phone = #{user_phone}
+        </if>
+        <if test="transaction_type != null">
+            and utt.id = #{transaction_type}
+        </if>
+        <if test="date_from != null and date_to == null">
+            and ut.created_date <![CDATA[ >= ]]> to_timestamp('${date_from}', 'dd.mm.yyyy')
+        </if>
+        <if test="date_from == null and date_to != null">
+            and ut.created_date <![CDATA[ <= ]]> to_timestamp('${date_to} 23:59:59', 'dd.mm.yyyy hh24:mi:ss')
+        </if>
+        <if test="date_from != null and date_to != null">
+            and ut.created_date between to_timestamp('${date_from}', 'dd.mm.yyyy')
+            and to_timestamp('${date_to} 23:59:59', 'dd.mm.yyyy hh24:mi:ss')
+        </if>
+        order by ut.created_date
+    </select>
+
+    <select id="selectTransactionTypes" parameterType="map" resultType="uz.hayatbank.api.bean.UserTransactionTypeBean">
+        select * from user_transaction_types
+        order by ordering
+    </select>
+
+    <parameterMap id="before_perform_transaction_map" type="java.util.Map">
+        <parameter property="p_users_id" jdbcType="INTEGER" javaType="java.lang.Integer" mode="IN"/>
+        <parameter property="p_transaction_types_id" jdbcType="INTEGER" javaType="java.lang.Integer" mode="IN"/>
+        <parameter property="p_amount" jdbcType="DOUBLE" javaType="java.lang.Double" mode="IN"/>
+
+        <parameter property="p_otp_session" jdbcType="VARCHAR" javaType="java.lang.String" mode="OUT"/>
+        <parameter property="p_result" jdbcType="INTEGER" javaType="java.lang.Integer" mode="OUT"/>
+        <parameter property="p_result_msg" jdbcType="VARCHAR" javaType="java.lang.String" mode="OUT"/>
+    </parameterMap>
+    <update id="before_perform_transaction" parameterMap="before_perform_transaction_map" statementType="CALLABLE">
+        CALL before_perform_transaction(?, ?, ?, ?, ?, ?)
+    </update>
+
+    <parameterMap id="perform_transaction_map" type="java.util.Map">
+        <parameter property="p_users_id" jdbcType="INTEGER" javaType="java.lang.Integer" mode="IN"/>
+        <parameter property="p_transaction_types_id" jdbcType="INTEGER" javaType="java.lang.Integer" mode="IN"/>
+        <parameter property="p_amount" jdbcType="DOUBLE" javaType="java.lang.Double" mode="IN"/>
+        <parameter property="p_detail" jdbcType="VARCHAR" javaType="java.lang.String" mode="IN"/>
+        <parameter property="p_otp_session" jdbcType="VARCHAR" javaType="java.lang.String" mode="IN"/>
+        <parameter property="p_otp_code" jdbcType="VARCHAR" javaType="java.lang.String" mode="IN"/>
+
+        <parameter property="p_result" jdbcType="INTEGER" javaType="java.lang.Integer" mode="OUT"/>
+        <parameter property="p_result_msg" jdbcType="VARCHAR" javaType="java.lang.String" mode="OUT"/>
+    </parameterMap>
+    <update id="perform_transaction" parameterMap="perform_transaction_map" statementType="CALLABLE">
+        CALL perform_transaction(?, ?, ?, ?, ?, ?, ?, ?)
+    </update>
+
+</mapper>

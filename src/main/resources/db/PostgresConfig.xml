@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+    <properties resource="postgres.properties"/>
+    <settings>
+        <setting name="localCacheScope" value="STATEMENT"/>
+        <setting name="logPrefix" value="db_log"/>
+        <setting name="logImpl" value="LOG4J2"/>
+<!--        <setting name="logImpl" value="STDOUT_LOGGING"/>-->
+        <setting name="defaultStatementTimeout" value="10"/>
+    </settings>
+    <environments default="${environment}">
+
+        <!-- Development -->
+        <environment id="dev">
+            <transactionManager type="JDBC"/>
+            <dataSource type="POOLED">
+                <property name="driver" value="${dev.jdbc.driverClassName}"/>
+                <property name="url" value="${dev.jdbc.url}"/>
+                <property name="username" value="${dev.jdbc.username}"/>
+                <property name="password" value="${dev.jdbc.password}"/>
+                <property name="poolMaximumActiveConnections" value="15"/>
+                <property name="poolMaximumIdleConnections" value="5"/>
+                <property name="defaultAutoCommit" value="true"/>
+                <property name="driver.ApplicationName" value="hayatBank API"/>
+            </dataSource>
+        </environment>
+
+        <!-- Production -->
+        <environment id="prod">
+            <transactionManager type="JDBC"/>
+            <dataSource type="POOLED">
+                <property name="driver" value="${prod.jdbc.driverClassName}"/>
+                <property name="url" value="${prod.jdbc.url}"/>
+                <property name="username" value="${prod.jdbc.username}"/>
+                <property name="password" value="${prod.jdbc.password}"/>
+                <property name="poolMaximumActiveConnections" value="15"/>
+                <property name="poolMaximumIdleConnections" value="5"/>
+                <property name="defaultAutoCommit" value="true"/>
+                <property name="driver.ApplicationName" value="hayatBank API"/>
+            </dataSource>
+        </environment>
+
+    </environments>
+
+    <mappers>
+        <mapper resource="db/sqlmaps/Common.xml"/>
+        <mapper resource="db/sqlmaps/Users.xml"/>
+        <mapper resource="db/sqlmaps/Transactions.xml"/>
+    </mappers>
+</configuration>
